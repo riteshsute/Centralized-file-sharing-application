@@ -1,40 +1,40 @@
+const path = require('path');
+
 const express = require('express');
+
+const fs = require('fs')
+
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const config = require('config');
-const fileRoutes = require('./src/routes/fileRoutes');
 
-const app = express();
+const dotenv = require('dotenv');
+dotenv.config();
 
-// Middleware to parse JSON
-app.use(express.json());
+const app = express()
 
-// Routes
-app.use('/api/files', fileRoutes);
+const cors = require('cors') 
 
-// Database Connection
-const connectDB = async () => {
-  try {
-    await mongoose.connect(config.get('mongoURI'), {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('Database connected successfully');
-  } catch (error) {
-    console.error('Database connection error:', error.message);
-    process.exit(1); // Exit process with failure
-  }
-};
+app.use(cors()); 
 
-// Start Server
-const PORT = process.env.PORT || 5000;
+const userRoutes = require('./routes/userRoute');
+// const expensesRoute = require('./Routes/expenses');
 
-const startServer = async () => {
-  await connectDB();
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-};
 
-startServer();
+app.use(userRoutes); 
+// app.use(expensesRoute);
 
-module.exports = app;
+
+
+mongoose
+  .connect(
+  'mongodb+srv://suteritesh:%40Ritesh123@cluster0.dnq92.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+)
+.then(() => {
+    app.listen(7000); 
+    console.log('server connected')
+})
+.catch(err => { 
+    console.log(err)
+})
+ 
+
