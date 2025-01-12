@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-console.log('in model')
+// console.log('in model')
 const userSchema = new Schema({
   name: {
     type: String,
     required: true
   },
   email: {
-    type: String,
+    type: String, 
     required: true,
-    unique: true
+    unique: true 
   },
   password: {
     type: String,
     required: true
   }
 });
-
+ 
 module.exports = mongoose.model('User', userSchema);
 
 

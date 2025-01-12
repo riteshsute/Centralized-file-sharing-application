@@ -14,14 +14,18 @@ const app = express()
 
 const cors = require('cors') 
 
-app.use(cors()); 
+app.use(cors());
+ 
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
 
 const userRoutes = require('./routes/userRoute');
-// const expensesRoute = require('./Routes/expenses');
+const fileRoutes = require('./routes/fileRoute');
 
 
-app.use(userRoutes); 
-// app.use(expensesRoute);
+app.use('/user', userRoutes); 
+app.use('/api/files', fileRoutes);
 
 
 
@@ -31,7 +35,7 @@ mongoose
 )
 .then(() => {
     app.listen(7000); 
-    console.log('server connected')
+    console.log('server running on 7000');
 })
 .catch(err => { 
     console.log(err)

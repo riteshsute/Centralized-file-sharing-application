@@ -1,15 +1,17 @@
 const User = require('../models/userModel');
 const Bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
+// const { name } = require('ejs');
 
 
 const signUpUser = ( async (req, res) => {
+    
     const { name, email, password} = req.body;
-    // console.log(userData)
+    console.log(req.body)
     try{
     const existingUser = await User.findOne({ where: { email: email } });
-
-      if (existingUser) {
+ 
+      if (existingUser) { 
         return res.status(400).json({
           error: 'User already exists'
         });
@@ -37,7 +39,7 @@ const signUpUser = ( async (req, res) => {
 
 
   const generateAccessToken = (id, name ) => {
-    return jwt.sign({ userId: id, name: name }, process.env.TOKEN_SECRET);
+    return jwt.sign({ userId: id, name: name }, 'jsbdgd89072o83hliebwod8hd');
   };
 
 
@@ -46,12 +48,12 @@ const loginUser =  ( async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // console.log(req.body, 'in login fun');
+    console.log(req.body, 'in login fun');
 
     const user = await User.findOne({ email: email });
 
     // console.log(user)
-    if (!user) {
+    if (!user) { 
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
