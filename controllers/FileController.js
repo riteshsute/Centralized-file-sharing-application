@@ -1,16 +1,18 @@
+require('dotenv').config();
 const fs = require('fs');
-const { create } = require('ipfs-http-client');
+const pinataSDK = require('@pinata/sdk');
 const File = require('../models/fileModel');
 
 console.log('Starting the file upload process');
 
-const ipfs = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+// Initialize Pinata SDK
+const pinata = new pinataSDK("3c2bc7f3f81e81f6981d", "88cbaa02bfc762acfffbd1462cf97b815e032e86560363d20fe7a36535ee7d0c");
 
 // Upload a file
 const uploadFile = async (req, res) => {
   try {
-    const userId = req.userId; // Assuming user ID is available from middleware
-    console.log('chek in upload file')
+    const userId = '6782b3509b6b6e75bfccc0f7'; // Assuming user ID is available from middleware
+    console.log(req.body, 'Check in upload file');
     const { file } = req;
 
     if (!file) {
@@ -23,14 +25,31 @@ const uploadFile = async (req, res) => {
     const fileBuffer = fs.readFileSync(file.path);
     console.log('File buffer created');
 
-    // Upload file to IPFS
-    const ipfsResult = await ipfs.add(fileBuffer);
+    // Create a readable stream from the buffer
+    const stream = fs.createReadStream(file.path);
+
+    // Upload file to Pinata
+
+    console.log(userId, 'dneqd')
+    const options = {
+      pinataMetadata: {
+        name: file.originalname,
+        keyvalues: {
+          uploader: userId,
+        },
+      },
+      pinataOptions: {
+        cidVersion: 0,
+      },
+    };
+
+    const ipfsResult = await pinata.pinFileToIPFS(stream, options);
     console.log('File uploaded to IPFS:', ipfsResult);
 
     // Save metadata to MongoDB
     const newFile = new File({
       filename: file.originalname,
-      ipfsHash: ipfsResult.path,
+      ipfsHash: ipfsResult.IpfsHash,
       uploader: userId,
     });
 
@@ -43,8 +62,8 @@ const uploadFile = async (req, res) => {
 
     res.status(201).json({
       message: 'File uploaded successfully',
-      ipfsHash: ipfsResult.path,
-      ipfsUrl: `https://ipfs.infura.io/ipfs/${ipfsResult.path}`,
+      ipfsHash: ipfsResult.IpfsHash,
+      ipfsUrl: `https://gateway.pinata.cloud/ipfs/${ipfsResult.IpfsHash}`,
     });
   } catch (error) {
     console.error('Error uploading file:', error);
@@ -61,7 +80,7 @@ const getFiles = async (req, res) => {
     res.status(200).json(files.map(file => ({
       filename: file.filename,
       ipfsHash: file.ipfsHash,
-      ipfsUrl: `https://ipfs.infura.io/ipfs/${file.ipfsHash}`,
+      ipfsUrl: `https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`,
       uploadDate: file.uploadDate,
     })));
   } catch (error) {
@@ -72,5 +91,5 @@ const getFiles = async (req, res) => {
 
 module.exports = {
   uploadFile,
-  getFiles
+  getFiles,
 };
