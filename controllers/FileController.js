@@ -80,7 +80,7 @@ const uploadFile = async (req, res) => {
 // Get all files for a user
 const getFiles = async (req, res) => {
   try {
-    const userId = req.body.userId; // Assuming user ID is available from middleware
+    const userId = req.body.userId; //  user ID is available from middleware
 
     console.log(userId, 'yyyyyyyyyy')
     const files = await File.find({ uploader: userId });
