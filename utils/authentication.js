@@ -3,29 +3,26 @@ const User = require('../models/userModel');
 
 const authenticate = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
+    const token = req.header('token');
+    console.log(token, 'checking the token');
 
-    console.log(token)
-    if (!token) {
-      return res.status(401).json({ success: false, message: 'Authentication failed: No token provided' });
-    }
+    const decoded = jwt.verify(token, 'jsbdgd89072o83hliebwod8hd');
+    console.log(decoded, decoded.userId, 'in auth');
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_fallback_secret'); // Use env variable for JWT_SECRET
-
-    // Fetch user from database
     const user = await User.findById(decoded.userId);
-
+    console.log(user, 'check user');
     if (!user) {
-      return res.status(404).json({ success: false, message: 'Authentication failed: User not found' });
+      return res.status(401).json({ success: false, message: 'User not found' });
     }
 
-    req.user = user; // Attach user object to the request
-    next(); // Pass control to the next middleware
-  } catch (error) {
-    console.error('Authentication Error:', error);
-    res.status(401).json({ success: false, message: 'Authentication failed: Invalid token' });
+    console.log(user._id.toString(), 'in auth'); // Convert ObjectId to string
+    req.user = user;
+    console.log(user._id.toString(), 'user ID as string');
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ success: false, message: 'Authentication failed' });
   }
 };
 
-module.exports = { authenticate };
+module.exports = authenticate;
