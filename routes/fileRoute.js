@@ -13,9 +13,9 @@ console.log('uploadFile type:', typeof uploadFile);
 
 
 // File upload route
-router.post('/upload', upload.single('file'), uploadFile);
+router.post('/upload', authenticate, upload.single('file'), uploadFile);
 
 // Get files route
-router.get('/files', getFiles);
+router.get('/files', authenticate,  getFiles);
 
 module.exports = router; 
