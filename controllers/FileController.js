@@ -11,11 +11,11 @@ const pinata = new pinataSDK(
   "88cbaa02bfc762acfffbd1462cf97b815e032e86560363d20fe7a36535ee7d0c"
 );
 
-// Upload a file
+
 const uploadFile = async (req, res) => {
   try {
     console.log(req.user, 'adeidfgedg')
-    const userId = req.user._id.toString(); // Assuming user ID is available from middleware
+    const userId = req.user._id.toString(); // user ID is available from middleware
     console.log(userId, "Check in upload file");
     const { file } = req;
 
@@ -77,7 +77,7 @@ const uploadFile = async (req, res) => {
   }
 };
 
-// Get all files for a user
+
 const getFiles = async (req, res) => {
   try {
     const userId = req.body.userId; //  user ID is available from middleware
