@@ -12,10 +12,8 @@ console.log('authenticate type:', typeof authenticate);
 console.log('uploadFile type:', typeof uploadFile);
 
 
-// File upload route
 router.post('/upload', authenticate, upload.single('file'), uploadFile);
 
-// Get files route
 router.get('/files', authenticate,  getFiles);
 
 module.exports = router; 

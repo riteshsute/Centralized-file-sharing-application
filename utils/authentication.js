@@ -15,7 +15,7 @@ const authenticate = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'User not found' });
     }
 
-    console.log(user._id.toString(), 'in auth'); // Convert ObjectId to string
+    console.log(user._id.toString(), 'in auth'); // ObjectId to string
     req.user = user;
     console.log(user._id.toString(), 'user ID as string');
     next();
